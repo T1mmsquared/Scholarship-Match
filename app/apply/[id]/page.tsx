@@ -9,6 +9,7 @@ import { generateSampleScholarships } from '@/lib/data';
 import { formatCurrency } from '@/lib/utils';
 import { ArrowLeft, Clock, Award } from 'lucide-react';
 import Link from 'next/link';
+import { useToast } from '@/lib/toast';
 
 export default function ApplyPage() {
   const params = useParams();
@@ -16,6 +17,7 @@ export default function ApplyPage() {
   const [scholarship, setScholarship] = useState<Scholarship | null>(null);
   const [loading, setLoading] = useState(true);
   const [essayText, setEssayText] = useState('');
+  const { showToast } = useToast();
 
   useEffect(() => {
     loadScholarship();
@@ -36,7 +38,11 @@ export default function ApplyPage() {
 
   const handleSubmit = () => {
     // In a real app, this would submit the application
-    alert('Application submitted! (This is a demo)');
+    showToast('success', 'Application submitted successfully!', 4000);
+    // In a real app, navigate to applications page
+    setTimeout(() => {
+      window.location.href = '/applications';
+    }, 2000);
   };
 
   if (loading) {

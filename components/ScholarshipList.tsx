@@ -4,6 +4,7 @@ import { Scholarship } from '@/types';
 import { formatCurrency, getDaysUntil } from '@/lib/utils';
 import { Clock, MapPin, Award, TrendingUp, BookOpen } from 'lucide-react';
 import { useState } from 'react';
+import { useToast } from '@/lib/toast';
 
 interface ScholarshipListProps {
   scholarships: Scholarship[];
@@ -14,6 +15,7 @@ interface ScholarshipListProps {
 export default function ScholarshipList({ scholarships, onSave, onApply }: ScholarshipListProps) {
   const [filter, setFilter] = useState<'all' | 'local' | 'quick' | 'high-value'>('all');
   const [sortBy, setSortBy] = useState<'match' | 'amount' | 'deadline' | 'time'>('match');
+  const { showToast } = useToast();
 
   const filtered = scholarships.filter(sch => {
     if (filter === 'local') return sch.local;
@@ -97,6 +99,20 @@ function ScholarshipCard({
   const daysUntil = getDaysUntil(scholarship.deadline);
   const isUrgent = daysUntil <= 7;
   const roi = scholarship.amount / scholarship.estimatedTime;
+  const { showToast } = useToast();
+
+  const handleSave = () => {
+    onSave?.(scholarship.id);
+    showToast('success', 'Scholarship saved to your list!', 3000);
+  };
+
+  const handleApply = () => {
+    onApply?.(scholarship.id);
+    showToast('info', 'Opening application...', 2000);
+    setTimeout(() => {
+      window.location.href = `/apply/${scholarship.id}`;
+    }, 500);
+  };
 
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800 hover:shadow-xl hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300 hover:scale-[1.01] group cursor-pointer">
@@ -190,13 +206,13 @@ function ScholarshipCard({
       {/* Actions */}
       <div className="flex gap-3">
         <button
-          onClick={() => onSave?.(scholarship.id)}
+          onClick={handleSave}
           className="flex-1 px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-neutral-800 hover:border-primary-300 dark:hover:border-primary-600 transition-all active:scale-95"
         >
           Save for Later
         </button>
         <button
-          onClick={() => onApply?.(scholarship.id)}
+          onClick={handleApply}
           className="flex-1 px-4 py-2 bg-primary-600 dark:bg-primary-500 text-white rounded-lg font-display font-medium hover:bg-primary-700 dark:hover:bg-primary-600 hover:shadow-lg active:scale-95 transition-all duration-200"
         >
           Start Application
