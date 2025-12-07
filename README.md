@@ -1,36 +1,171 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Scholarship Matcher - Gamified Scholarship Application Platform
+
+A modern, gamified scholarship matching application for high school and college students, inspired by Duolingo's engaging user experience.
+
+## Features
+
+### Core Features Implemented
+
+✅ **Expanded Scholarship Database**
+- 500+ sample scholarships with diverse criteria
+- Local and state-specific scholarships
+- Quick-entry/no-essay scholarships
+- Renewable and multi-year awards
+
+✅ **Smart Matching Algorithm**
+- Multi-criteria matching (GPA, location, major, year, financial need, etc.)
+- Priority scoring for local scholarships
+- Application type preferences
+- ROI calculation
+
+✅ **Gamification System**
+- Progress dashboard with key metrics
+- Achievement badges
+- Streak tracking
+- Points and leveling system
+- Dollar tracking (applied for and won)
+
+✅ **Onboarding Flow**
+- 3-step, 60-90 second onboarding
+- Progress indicators
+- Optional fields with "Skip for now"
+- Visual, interactive design
+
+✅ **Mobile-First UI**
+- Responsive design
+- Bottom navigation bar
+- Touch-friendly interface
+- Fast loading
+
+✅ **Scholarship Browsing**
+- Filter by type (all, local, quick, high-value)
+- Sort by match, amount, deadline, time
+- Detailed scholarship cards with ROI
+- Competition level indicators
+
+### Features to Add
+
+- Deadline management with notifications
+- Essay writing support and resources
+- Application assistance tools (document vault, auto-fill)
+- Financial literacy modules
+- Social features (success stories, peer tips)
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **Date Handling**: date-fns
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ and npm
+
+### Installation
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+scholarship-matcher/
+├── app/                    # Next.js app router pages
+│   ├── api/               # API routes
+│   ├── scholarships/      # Scholarship browsing page
+│   ├── applications/      # User applications page
+│   ├── profile/           # User profile page
+│   └── page.tsx           # Home/dashboard page
+├── components/            # React components
+│   ├── Onboarding.tsx     # Onboarding flow
+│   ├── Dashboard.tsx      # Main dashboard
+│   ├── ScholarshipList.tsx # Scholarship browsing
+│   └── Navigation.tsx     # Bottom navigation
+├── lib/                   # Utility functions
+│   ├── data.ts           # Data generation
+│   ├── matching.ts       # Matching algorithm
+│   └── utils.ts          # Helper functions
+└── types/                # TypeScript type definitions
+    └── index.ts          # Core types
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Data Model
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Scholarship
+- Basic info (title, provider, amount, deadline)
+- Requirements (GPA, major, location, demographics, etc.)
+- Application details (type, time estimate, essay prompts)
+- Competition level and historical data
+- Tags and metadata
 
-## Deploy on Vercel
+### User
+- Profile information
+- Preferences
+- Onboarding status
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### UserProgress
+- Application statistics
+- Gamification data (badges, streaks, points, level)
+- Success metrics
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Matching Algorithm
+
+The matching algorithm scores scholarships based on:
+- Eligibility requirements (hard filters)
+- Location matches (local > state > general)
+- Profile alignment (major, year, demographics)
+- Application preferences
+- Competition level
+- Award amount
+- Time investment (ROI)
+
+## Future Enhancements
+
+1. **Deadline Management**
+   - Push notifications
+   - Calendar integration
+   - Customizable reminders
+
+2. **Essay Support**
+   - Essay prompt library
+   - Recycling suggestions
+   - AI feedback
+   - Word count tracking
+
+3. **Application Tools**
+   - Document vault
+   - Resume builder
+   - Auto-fill forms
+   - Recommendation tracker
+
+4. **Financial Literacy**
+   - Micro-courses
+   - FAFSA guidance
+   - Budgeting tools
+
+5. **Social Features**
+   - Success stories
+   - Peer tips
+   - School leaderboards
+
+## License
+
+MIT

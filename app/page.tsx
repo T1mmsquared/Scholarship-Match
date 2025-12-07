@@ -1,65 +1,104 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState } from 'react';
+import Onboarding from '@/components/Onboarding';
+import Dashboard from '@/components/Dashboard';
+import Navigation from '@/components/Navigation';
+import { User, UserProgress, Scholarship } from '@/types';
+import { matchScholarships } from '@/lib/matching';
+import { generateSampleScholarships } from '@/lib/data';
 
 export default function Home() {
+  const [user, setUser] = useState<User | null>(null);
+  const [progress, setProgress] = useState<UserProgress | null>(null);
+  const [matchedScholarships, setMatchedScholarships] = useState<Scholarship[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const res = await fetch('/api/user?userId=demo-user');
+      const data = await res.json();
+      setUser(data.user);
+      setProgress(data.progress);
+
+      // Load and match scholarships
+      if (data.user.onboardingCompleted && data.user.profile) {
+        const scholarships = generateSampleScholarships();
+        const matched = matchScholarships(scholarships, data.user);
+        setMatchedScholarships(matched);
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOnboardingComplete = async (userData: Partial<User>) => {
+    try {
+      const res = await fetch('/api/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'demo-user',
+          ...userData,
+        }),
+      });
+      const data = await res.json();
+      setUser(data.user);
+
+      // Match scholarships after onboarding
+      if (data.user.profile) {
+        const scholarships = generateSampleScholarships();
+        const matched = matchScholarships(scholarships, data.user);
+        setMatchedScholarships(matched);
+      }
+    } catch (error) {
+      console.error('Error saving user data:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !user.onboardingCompleted) {
+    return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
+
+  // Get upcoming deadlines (next 30 days)
+  const upcomingDeadlines = matchedScholarships
+    .filter(s => {
+      const deadline = new Date(s.deadline);
+      const today = new Date();
+      const diffDays = Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDays > 0 && diffDays <= 30;
+    })
+    .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())
+    .slice(0, 5);
+
+  // Get recent matches (top 3)
+  const recentMatches = matchedScholarships.slice(0, 3);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <Dashboard
+        progress={progress!}
+        upcomingDeadlines={upcomingDeadlines}
+        recentMatches={recentMatches}
+      />
+      <Navigation />
+    </>
   );
 }

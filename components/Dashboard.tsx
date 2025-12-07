@@ -1,0 +1,190 @@
+'use client';
+
+import { UserProgress, Scholarship } from '@/types';
+import { Trophy, TrendingUp, Calendar, Target, Flame, Award } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
+
+interface DashboardProps {
+  progress: UserProgress;
+  upcomingDeadlines: Scholarship[];
+  recentMatches: Scholarship[];
+}
+
+export default function Dashboard({ progress, upcomingDeadlines, recentMatches }: DashboardProps) {
+  const badges = [
+    { id: 'first', name: 'First Application', icon: '🎯', earned: progress.applicationsSubmitted > 0 },
+    { id: 'ten', name: '10 Applications', icon: '🔥', earned: progress.applicationsSubmitted >= 10 },
+    { id: 'fifty', name: '$50K Applied', icon: '💰', earned: progress.totalDollarsApplied >= 50000 },
+    { id: 'local', name: 'Local Hunter', icon: '🏠', earned: false },
+    { id: 'streak', name: '7 Day Streak', icon: '⚡', earned: progress.currentStreak >= 7 },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-2xl font-bold mb-2">Your Scholarship Journey</h1>
+          <p className="text-blue-100">Level {progress.level} • {progress.points} points</p>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto p-4 space-y-6">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Applications</span>
+              <Target className="w-5 h-5 text-blue-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">{progress.applicationsSubmitted}</div>
+            <div className="text-xs text-gray-500 mt-1">
+              {progress.applicationsInProgress} in progress
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Total Applied</span>
+              <TrendingUp className="w-5 h-5 text-green-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">
+              {formatCurrency(progress.totalDollarsApplied)}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {formatCurrency(progress.totalDollarsWon)} won
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Success Rate</span>
+              <Trophy className="w-5 h-5 text-yellow-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">
+              {progress.successRate > 0 ? `${progress.successRate}%` : '—'}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">Win rate</div>
+          </div>
+
+          <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-600">Current Streak</span>
+              <Flame className="w-5 h-5 text-orange-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">{progress.currentStreak}</div>
+            <div className="text-xs text-gray-500 mt-1">
+              Best: {progress.longestStreak} days
+            </div>
+          </div>
+        </div>
+
+        {/* Badges Section */}
+        <div className="bg-white rounded-xl p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Award className="w-5 h-5 text-blue-600" />
+            Your Badges
+          </h2>
+          <div className="grid grid-cols-5 gap-3">
+            {badges.map((badge) => (
+              <div
+                key={badge.id}
+                className={`text-center p-3 rounded-lg border-2 ${
+                  badge.earned
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 bg-gray-50 opacity-50'
+                }`}
+              >
+                <div className="text-3xl mb-1">{badge.icon}</div>
+                <div className="text-xs font-medium text-gray-700">{badge.name}</div>
+                {badge.earned && (
+                  <div className="text-xs text-blue-600 mt-1">✓ Earned</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Upcoming Deadlines */}
+        {upcomingDeadlines.length > 0 && (
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-red-600" />
+              Upcoming Deadlines
+            </h2>
+            <div className="space-y-3">
+              {upcomingDeadlines.slice(0, 5).map((scholarship) => (
+                <div
+                  key={scholarship.id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900">{scholarship.title}</div>
+                    <div className="text-sm text-gray-600">
+                      {formatCurrency(scholarship.amount)} • Due {new Date(scholarship.deadline).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="text-xs text-red-600 font-medium">
+                    {getDaysUntilDeadline(scholarship.deadline)} days
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Recent Matches */}
+        {recentMatches.length > 0 && (
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">New Matches for You</h2>
+            <div className="space-y-3">
+              {recentMatches.slice(0, 3).map((scholarship) => (
+                <div
+                  key={scholarship.id}
+                  className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{scholarship.title}</h3>
+                      <p className="text-sm text-gray-600">{scholarship.provider}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-green-600">
+                        {formatCurrency(scholarship.amount)}
+                      </div>
+                      {scholarship.local && (
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                          Local
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <span>{scholarship.estimatedTime} min</span>
+                    <span>•</span>
+                    <span className={`capitalize ${
+                      scholarship.competitionLevel === 'low' ? 'text-green-600' :
+                      scholarship.competitionLevel === 'medium' ? 'text-yellow-600' :
+                      'text-red-600'
+                    }`}>
+                      {scholarship.competitionLevel} competition
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function getDaysUntilDeadline(deadline: string): number {
+  const today = new Date();
+  const deadlineDate = new Date(deadline);
+  const diffTime = deadlineDate.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 0;
+}
+
