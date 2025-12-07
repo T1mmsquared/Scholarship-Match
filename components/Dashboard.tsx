@@ -20,30 +20,30 @@ export default function Dashboard({ progress, upcomingDeadlines, recentMatches }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-neutral-950 pb-20 transition-colors">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 dark:from-primary-700 dark:to-primary-800 text-white p-6 transition-colors">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl font-bold mb-2">Your Scholarship Journey</h1>
-          <p className="text-blue-100">Level {progress.level} • {progress.points} points</p>
+          <p className="text-primary-100 dark:text-primary-200">Level {progress.level} • {progress.points} points</p>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto p-4 space-y-6">
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-neutral-800 transition-colors">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Applications</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Applications</span>
               <Target className="w-5 h-5 text-blue-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{progress.applicationsSubmitted}</div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{progress.applicationsSubmitted}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {progress.applicationsInProgress} in progress
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-neutral-800 transition-colors">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600">Total Applied</span>
               <TrendingUp className="w-5 h-5 text-green-600" />
@@ -56,7 +56,7 @@ export default function Dashboard({ progress, upcomingDeadlines, recentMatches }
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-neutral-800 transition-colors">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600">Success Rate</span>
               <Trophy className="w-5 h-5 text-yellow-600" />
@@ -67,7 +67,7 @@ export default function Dashboard({ progress, upcomingDeadlines, recentMatches }
             <div className="text-xs text-gray-500 mt-1">Win rate</div>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-neutral-800 transition-colors">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600">Current Streak</span>
               <Flame className="w-5 h-5 text-orange-600" />
@@ -80,8 +80,8 @@ export default function Dashboard({ progress, upcomingDeadlines, recentMatches }
         </div>
 
         {/* Badges Section */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800 transition-colors">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
             <Award className="w-5 h-5 text-blue-600" />
             Your Badges
           </h2>
@@ -96,7 +96,7 @@ export default function Dashboard({ progress, upcomingDeadlines, recentMatches }
                 }`}
               >
                 <div className="text-3xl mb-1">{badge.icon}</div>
-                <div className="text-xs font-medium text-gray-700">{badge.name}</div>
+                <div className="text-xs font-medium text-gray-700 dark:text-gray-300">{badge.name}</div>
                 {badge.earned && (
                   <div className="text-xs text-blue-600 mt-1">✓ Earned</div>
                 )}
@@ -107,8 +107,8 @@ export default function Dashboard({ progress, upcomingDeadlines, recentMatches }
 
         {/* Upcoming Deadlines */}
         {upcomingDeadlines.length > 0 && (
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800 transition-colors">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-red-600" />
               Upcoming Deadlines
             </h2>
@@ -135,7 +135,7 @@ export default function Dashboard({ progress, upcomingDeadlines, recentMatches }
 
         {/* Recent Matches */}
         {recentMatches.length > 0 && (
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800 transition-colors">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">New Matches for You</h2>
             <div className="space-y-3">
               {recentMatches.slice(0, 3).map((scholarship) => (

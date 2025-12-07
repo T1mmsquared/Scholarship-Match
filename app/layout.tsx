@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Rubik, Fjalla_One } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/lib/theme";
+import { ThemeScript } from "./theme-script";
 
 // Primary font: Inter (body text, UI elements)
 const inter = Inter({
@@ -37,11 +39,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body
         className={`${inter.variable} ${rubik.variable} ${fjallaOne.variable} font-sans antialiased`}
       >
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
