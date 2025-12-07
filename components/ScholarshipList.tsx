@@ -99,18 +99,18 @@ function ScholarshipCard({
   const roi = scholarship.amount / scholarship.estimatedTime;
 
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800 hover:shadow-md transition-all">
+    <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800 hover:shadow-xl hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300 hover:scale-[1.01] group cursor-pointer">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{scholarship.title}</h3>
             {scholarship.local && (
-              <span className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded">
+              <span className="bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-xs font-medium px-2 py-1 rounded border border-primary-200 dark:border-primary-800">
                 Local
               </span>
             )}
             {scholarship.renewable && (
-              <span className="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded">
+              <span className="bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300 text-xs font-medium px-2 py-1 rounded border border-success-200 dark:border-success-800">
                 Renewable
               </span>
             )}
@@ -119,10 +119,10 @@ function ScholarshipCard({
           <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">{scholarship.description}</p>
         </div>
         <div className="text-right ml-4">
-          <div className="text-2xl font-bold text-green-600 mb-1">
+          <div className="text-2xl font-bold text-success-600 dark:text-success-400 mb-1 group-hover:scale-110 transition-transform">
             {formatCurrency(scholarship.amount)}
           </div>
-          <div className="text-xs text-gray-500">ROI: {roi.toFixed(0)}/min</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">ROI: {roi.toFixed(0)}/min</div>
         </div>
       </div>
 
@@ -191,13 +191,13 @@ function ScholarshipCard({
       <div className="flex gap-3">
         <button
           onClick={() => onSave?.(scholarship.id)}
-          className="flex-1 px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
+          className="flex-1 px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-neutral-800 hover:border-primary-300 dark:hover:border-primary-600 transition-all active:scale-95"
         >
           Save for Later
         </button>
         <button
           onClick={() => onApply?.(scholarship.id)}
-          className="flex-1 px-4 py-2 bg-primary-600 dark:bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors"
+          className="flex-1 px-4 py-2 bg-primary-600 dark:bg-primary-500 text-white rounded-lg font-display font-medium hover:bg-primary-700 dark:hover:bg-primary-600 hover:shadow-lg active:scale-95 transition-all duration-200"
         >
           Start Application
         </button>
