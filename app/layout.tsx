@@ -3,6 +3,7 @@ import { Inter, Rubik, Fjalla_One } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 import { ThemeScript } from "./theme-script";
+import { ToastProvider } from "@/lib/toast";
 
 // Primary font: Inter (body text, UI elements)
 const inter = Inter({
@@ -47,7 +48,9 @@ export default function RootLayout({
         className={`${inter.variable} ${rubik.variable} ${fjallaOne.variable} font-sans antialiased`}
       >
         <ThemeProvider>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

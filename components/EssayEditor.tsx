@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FileText, Save, CheckCircle } from 'lucide-react';
+import { useToast } from '@/lib/toast';
 
 interface EssayEditorProps {
   prompt: string;
@@ -14,6 +15,7 @@ export default function EssayEditor({ prompt, wordCount, initialText = '', onSav
   const [text, setText] = useState(initialText);
   const [currentWordCount, setCurrentWordCount] = useState(0);
   const [saved, setSaved] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const words = text.trim().split(/\s+/).filter(word => word.length > 0);
@@ -23,6 +25,7 @@ export default function EssayEditor({ prompt, wordCount, initialText = '', onSav
   const handleSave = () => {
     onSave?.(text);
     setSaved(true);
+    showToast('success', 'Essay saved successfully!', 2000);
     setTimeout(() => setSaved(false), 2000);
   };
 

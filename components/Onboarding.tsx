@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { User } from '@/types';
 import { ArrowRight, GraduationCap, MapPin, DollarSign } from 'lucide-react';
+import { useToast } from '@/lib/toast';
+import FormField from './FormField';
 
 interface OnboardingProps {
   onComplete: (user: Partial<User>) => void;
@@ -11,6 +13,7 @@ interface OnboardingProps {
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<Partial<User['profile']>>({});
+  const { showToast } = useToast();
 
   const updateField = (field: keyof User['profile'], value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -19,8 +22,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const handleNext = () => {
     if (step < 3) {
       setStep(step + 1);
+      showToast('info', `Step ${step + 1} of 3`, 2000);
     } else {
       onComplete({ profile: formData as User['profile'], onboardingCompleted: true });
+      showToast('success', 'Profile setup complete! Finding your scholarships...', 3000);
     }
   };
 
@@ -35,7 +40,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-200 dark:border-neutral-800 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* Progress Bar */}
         <div className="mb-8">
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
+          <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
             <span>Step {step} of 3</span>
             <span>{Math.round(progress)}%</span>
           </div>
@@ -64,51 +69,51 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  What year are you? <span className="text-gray-400 dark:text-gray-500">(optional)</span>
-                </label>
-                <select
-                  value={formData.year || ''}
-                  onChange={(e) => updateField('year', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all hover:border-primary-300 dark:hover:border-primary-600"
-                >
-                  <option value="">Select year</option>
-                  <option value="freshman">Freshman</option>
-                  <option value="sophomore">Sophomore</option>
-                  <option value="junior">Junior</option>
-                  <option value="senior">Senior</option>
-                </select>
-              </div>
+              <FormField
+                label="What year are you?"
+                name="year"
+                type="select"
+                value={formData.year || ''}
+                onChange={(value) => updateField('year', value)}
+                optional
+                options={[
+                  { value: 'freshman', label: 'Freshman' },
+                  { value: 'sophomore', label: 'Sophomore' },
+                  { value: 'junior', label: 'Junior' },
+                  { value: 'senior', label: 'Senior' },
+                ]}
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  What's your GPA? <span className="text-gray-400">(optional)</span>
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="4.0"
-                  value={formData.gpa || ''}
-                  onChange={(e) => updateField('gpa', parseFloat(e.target.value))}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all hover:border-primary-300 dark:hover:border-primary-600"
-                  placeholder="3.5"
-                />
-              </div>
+              <FormField
+                label="What's your GPA?"
+                name="gpa"
+                type="number"
+                value={formData.gpa || ''}
+                onChange={(value) => updateField('gpa', value)}
+                placeholder="3.5"
+                optional
+                min={0}
+                max={4.0}
+                step={0.1}
+                validation={(val) => {
+                  const num = typeof val === 'number' ? val : parseFloat(val as string);
+                  if (val === '' || val === null || val === undefined) return { isValid: true };
+                  if (isNaN(num)) return { isValid: false, message: 'Please enter a valid number' };
+                  if (num < 0) return { isValid: false, message: 'GPA must be 0.0 or higher' };
+                  if (num > 4.0) return { isValid: false, message: 'GPA must be 4.0 or lower (unweighted scale)' };
+                  return { isValid: true, message: '✓ GPA looks good' };
+                }}
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  What's your major? <span className="text-gray-400">(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.major || ''}
-                  onChange={(e) => updateField('major', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all hover:border-primary-300 dark:hover:border-primary-600"
-                  placeholder="Engineering, Business, etc."
-                />
-              </div>
+              <FormField
+                label="What's your major?"
+                name="major"
+                type="text"
+                value={formData.major || ''}
+                onChange={(value) => updateField('major', value)}
+                placeholder="Engineering, Business, etc."
+                optional
+              />
             </div>
           </div>
         )}
@@ -116,39 +121,41 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         {/* Step 2: Location */}
         {step === 2 && (
           <div className="space-y-6">
-            <div className="text-center">
-              <MapPin className="w-16 h-16 mx-auto text-blue-600 mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Where are you located?</h2>
-              <p className="text-gray-600">This helps us find local scholarships with better odds</p>
+            <div className="text-center animate-in fade-in slide-in-from-right-4 duration-500">
+              <MapPin className="w-16 h-16 mx-auto text-primary-600 dark:text-primary-400 mb-4" />
+              <h2 className="text-2xl font-heading font-bold text-gray-900 dark:text-gray-100 mb-2">Where are you located?</h2>
+              <p className="text-gray-600 dark:text-gray-400">This helps us find local scholarships with better odds</p>
             </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  State <span className="text-gray-400">(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.state || ''}
-                  onChange={(e) => updateField('state', e.target.value.toUpperCase())}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all hover:border-primary-300 dark:hover:border-primary-600"
-                  placeholder="CA, NY, TX, etc."
-                  maxLength={2}
-                />
-              </div>
+              <FormField
+                label="State"
+                name="state"
+                type="text"
+                value={formData.state || ''}
+                onChange={(value) => updateField('state', (value as string).toUpperCase())}
+                placeholder="CA, NY, TX, etc."
+                optional
+                maxLength={2}
+                validation={(val) => {
+                  const str = val as string;
+                  if (!str || str.length === 0) return { isValid: true };
+                  if (str.length === 2 && /^[A-Z]{2}$/.test(str)) {
+                    return { isValid: true, message: '✓ State code looks good' };
+                  }
+                  return { isValid: false, message: 'Please enter a 2-letter state code (e.g., CA, NY)' };
+                }}
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  City <span className="text-gray-400">(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.city || ''}
-                  onChange={(e) => updateField('city', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all hover:border-primary-300 dark:hover:border-primary-600"
-                  placeholder="Los Angeles, New York, etc."
-                />
-              </div>
+              <FormField
+                label="City"
+                name="city"
+                type="text"
+                value={formData.city || ''}
+                onChange={(value) => updateField('city', value)}
+                placeholder="Los Angeles, New York, etc."
+                optional
+              />
             </div>
           </div>
         )}
@@ -156,10 +163,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         {/* Step 3: Preferences */}
         {step === 3 && (
           <div className="space-y-6">
-            <div className="text-center">
-              <DollarSign className="w-16 h-16 mx-auto text-blue-600 mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Almost done!</h2>
-              <p className="text-gray-600">Tell us a bit more about your preferences</p>
+            <div className="text-center animate-in fade-in slide-in-from-right-4 duration-500">
+              <DollarSign className="w-16 h-16 mx-auto text-primary-600 dark:text-primary-400 mb-4" />
+              <h2 className="text-2xl font-heading font-bold text-gray-900 dark:text-gray-100 mb-2">Almost done!</h2>
+              <p className="text-gray-600 dark:text-gray-400">Tell us a bit more about your preferences</p>
             </div>
 
             <div className="space-y-4">
@@ -187,18 +194,18 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     type="checkbox"
                     checked={formData.financialNeed || false}
                     onChange={(e) => updateField('financialNeed', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-primary-600 dark:text-primary-400 rounded focus:ring-primary-500"
                   />
-                  <span className="text-sm text-gray-700">I have financial need</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">I have financial need</span>
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formData.firstGeneration || false}
                     onChange={(e) => updateField('firstGeneration', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-primary-600 dark:text-primary-400 rounded focus:ring-primary-500"
                   />
-                  <span className="text-sm text-gray-700">First-generation college student</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">First-generation college student</span>
                 </label>
               </div>
             </div>
@@ -210,14 +217,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           {step > 1 && (
             <button
               onClick={() => setStep(step - 1)}
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
             >
               Back
             </button>
           )}
           <button
             onClick={handleSkip}
-            className="px-4 py-3 text-gray-600 font-medium hover:text-gray-800 transition-colors"
+            className="px-4 py-3 text-gray-600 dark:text-gray-400 font-medium hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
           >
             Skip for now
           </button>
