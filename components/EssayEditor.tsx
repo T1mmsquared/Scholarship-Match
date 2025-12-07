@@ -38,15 +38,15 @@ export default function EssayEditor({ prompt, wordCount, initialText = '', onSav
     : 'text-gray-600';
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800">
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
-          <FileText className="w-5 h-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Essay Prompt</h3>
+          <FileText className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Essay Prompt</h3>
         </div>
-        <p className="text-gray-700 bg-gray-50 p-4 rounded-lg">{prompt}</p>
+        <p className="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg border border-gray-200 dark:border-neutral-700">{prompt}</p>
         {wordCount && (
-          <div className="mt-2 text-sm text-gray-600">
+          <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Target: {wordCount} words
           </div>
         )}
@@ -57,26 +57,26 @@ export default function EssayEditor({ prompt, wordCount, initialText = '', onSav
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Start writing your essay here..."
-          className="w-full h-96 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className="w-full h-96 p-4 border border-gray-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
         />
       </div>
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div>
-            <span className="text-sm text-gray-600">Word count: </span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">Word count: </span>
             <span className={`font-semibold ${wordCountStatus}`}>
               {currentWordCount}
             </span>
             {wordCount && (
-              <span className="text-gray-500"> / {wordCount}</span>
+              <span className="text-gray-500 dark:text-gray-400"> / {wordCount}</span>
             )}
           </div>
           {wordCount && (
             <div className={`text-sm ${
               currentWordCount >= wordCount * 0.9 && currentWordCount <= wordCount * 1.1
-                ? 'text-green-600'
-                : 'text-yellow-600'
+                ? 'text-success-600 dark:text-success-400'
+                : 'text-warning-600 dark:text-warning-400'
             }`}>
               {currentWordCount < wordCount * 0.9
                 ? `${Math.ceil(wordCount * 0.9 - currentWordCount)} more words needed`
@@ -91,8 +91,8 @@ export default function EssayEditor({ prompt, wordCount, initialText = '', onSav
           onClick={handleSave}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
             saved
-              ? 'bg-green-600 text-white'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
+              ? 'bg-success-600 dark:bg-success-500 text-white hover:bg-success-700 dark:hover:bg-success-600'
+              : 'bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600'
           }`}
         >
           {saved ? (

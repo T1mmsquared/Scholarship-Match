@@ -38,15 +38,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Apply theme to document
   const applyTheme = (newTheme: 'light' | 'dark') => {
+    if (typeof window === 'undefined') return;
+    
     const root = document.documentElement;
     if (newTheme === 'dark') {
       root.classList.add('dark');
       root.setAttribute('data-theme', 'dark');
+      // Force update body background
+      document.body.style.backgroundColor = 'var(--bg-primary)';
+      document.body.style.color = 'var(--text-primary)';
     } else {
       root.classList.remove('dark');
       root.setAttribute('data-theme', 'light');
+      // Force update body background
+      document.body.style.backgroundColor = 'var(--bg-primary)';
+      document.body.style.color = 'var(--text-primary)';
     }
     setResolvedTheme(newTheme);
+    
+    // Trigger a reflow to ensure styles apply
+    void root.offsetHeight;
   };
 
   // Initialize theme on mount

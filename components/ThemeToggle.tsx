@@ -6,35 +6,67 @@ import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   
-  // Only use theme hook after mount to avoid SSR issues
-  let resolvedTheme: 'light' | 'dark' = 'light';
-  let toggleTheme: () => void = () => {};
-  
+  // Use theme hook if available
+  let themeContext: ReturnType<typeof useTheme> | null = null;
   try {
-    const theme = useTheme();
-    resolvedTheme = theme.resolvedTheme;
-    toggleTheme = theme.toggleTheme;
+    themeContext = useTheme();
   } catch (e) {
-    // ThemeProvider not available (SSR), use default
-    if (typeof window !== 'undefined') {
-      resolvedTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      toggleTheme = () => {
-        const isDark = document.documentElement.classList.contains('dark');
-        if (isDark) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
-        } else {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
-        }
-      };
-    }
+    // ThemeProvider not available, will use fallback
   }
 
   useEffect(() => {
     setMounted(true);
+    
+    // Check initial theme
+    const checkTheme = () => {
+      const root = document.documentElement;
+      const dark = root.classList.contains('dark');
+      setIsDark(dark);
+    };
+    
+    checkTheme();
+    
+    // Watch for theme changes
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme'],
+    });
+    
+    return () => observer.disconnect();
   }, []);
+
+  // Update state when theme context changes
+  useEffect(() => {
+    if (themeContext) {
+      setIsDark(themeContext.resolvedTheme === 'dark');
+    }
+  }, [themeContext?.resolvedTheme]);
+
+  const handleToggle = () => {
+    if (themeContext) {
+      // Use theme context if available
+      themeContext.toggleTheme();
+    } else {
+      // Fallback: manually toggle
+      const root = document.documentElement;
+      const isCurrentlyDark = root.classList.contains('dark');
+      
+      if (isCurrentlyDark) {
+        root.classList.remove('dark');
+        root.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        setIsDark(false);
+      } else {
+        root.classList.add('dark');
+        root.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        setIsDark(true);
+      }
+    }
+  };
 
   if (!mounted) {
     // Return a placeholder during SSR
@@ -51,15 +83,15 @@ export default function ThemeToggle() {
 
   return (
     <button
-      onClick={toggleTheme}
-      className="btn btn-ghost btn-circle"
-      aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
-      title={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
+      onClick={handleToggle}
+      className="btn btn-ghost btn-circle hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
+      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+      title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
-      {resolvedTheme === 'dark' ? (
-        <Sun className="w-5 h-5" />
+      {isDark ? (
+        <Sun className="w-5 h-5 text-warning-500" />
       ) : (
-        <Moon className="w-5 h-5" />
+        <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
       )}
     </button>
   );

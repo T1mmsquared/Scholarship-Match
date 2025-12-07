@@ -226,11 +226,38 @@ body {
   font-family: var(--font-primary);
   font-size: var(--text-base);
   line-height: 1.5;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure all text elements use proper colors */
+* {
+  color: inherit;
+}
+
+/* Force text colors for common elements */
+p, span, div, a, li, td, th {
+  color: var(--text-primary);
+}
+
+/* Links should be visible */
+a {
+  color: var(--color-primary-600);
+}
+
+.dark a {
+  color: var(--color-primary-400);
+}
+
+a:hover {
+  color: var(--color-primary-700);
+}
+
+.dark a:hover {
+  color: var(--color-primary-300);
 }
 
 /* Typography Hierarchy */

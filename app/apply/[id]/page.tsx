@@ -58,10 +58,10 @@ export default function ApplyPage() {
 
   if (!scholarship) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-neutral-950">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Scholarship not found</h2>
-          <Link href="/scholarships" className="text-blue-600 hover:underline">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Scholarship not found</h2>
+          <Link href="/scholarships" className="text-primary-600 dark:text-primary-400 hover:underline">
             Browse scholarships
           </Link>
         </div>
@@ -71,19 +71,19 @@ export default function ApplyPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 pb-20">
+      <div className="min-h-screen bg-gray-50 dark:bg-neutral-950 pb-20">
         {/* Header */}
-        <div className="bg-white border-b sticky top-0 z-10 p-4">
+        <div className="bg-white dark:bg-neutral-900 border-b border-gray-200 dark:border-neutral-800 sticky top-0 z-10 p-4">
           <div className="max-w-4xl mx-auto flex items-center gap-4">
-            <Link href="/scholarships" className="text-gray-600 hover:text-gray-900">
+            <Link href="/scholarships" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
               <ArrowLeft className="w-6 h-6" />
             </Link>
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-gray-900">{scholarship.title}</h1>
-              <p className="text-sm text-gray-600">{scholarship.provider}</p>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{scholarship.title}</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{scholarship.provider}</p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-success-600 dark:text-success-400">
                 {formatCurrency(scholarship.amount)}
               </div>
             </div>
@@ -92,18 +92,18 @@ export default function ApplyPage() {
 
         <div className="max-w-4xl mx-auto p-4 space-y-6">
           {/* Scholarship Info */}
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Scholarship Details</h2>
+          <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Scholarship Details</h2>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm">
-                <Clock className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-600">Estimated time: </span>
-                <span className="font-medium text-gray-900">{scholarship.estimatedTime} minutes</span>
+                <Clock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                <span className="text-gray-600 dark:text-gray-400">Estimated time: </span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">{scholarship.estimatedTime} minutes</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <Award className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-600">Deadline: </span>
-                <span className="font-medium text-gray-900">
+                <Award className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                <span className="text-gray-600 dark:text-gray-400">Deadline: </span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">
                   {new Date(scholarship.deadline).toLocaleDateString('en-US', {
                     month: 'long',
                     day: 'numeric',
@@ -112,7 +112,7 @@ export default function ApplyPage() {
                 </span>
               </div>
               <div>
-                <p className="text-sm text-gray-600">{scholarship.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{scholarship.description}</p>
               </div>
             </div>
           </div>
@@ -129,9 +129,9 @@ export default function ApplyPage() {
 
           {/* Non-essay applications */}
           {scholarship.applicationType !== 'essay' && (
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Application</h2>
-              <p className="text-gray-600 mb-4">
+            <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Application</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 This scholarship uses a {scholarship.applicationType.replace('-', ' ')} application.
                 Click the button below to proceed to the external application.
               </p>
@@ -139,7 +139,7 @@ export default function ApplyPage() {
                 href={scholarship.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                className="inline-block px-6 py-3 bg-primary-600 dark:bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors"
               >
                 Continue to Application
               </a>
@@ -148,12 +148,12 @@ export default function ApplyPage() {
 
           {/* Submit Button */}
           {scholarship.applicationType === 'essay' && (
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-neutral-800">
               <button
                 onClick={handleSubmit}
                 disabled={!essayText || (scholarship.essayWordCount ? 
                   (essayText.trim().split(/\s+/).length < scholarship.essayWordCount * 0.9) : false)}
-                className="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="w-full px-6 py-3 bg-success-600 dark:bg-success-500 text-white rounded-lg font-medium hover:bg-success-700 dark:hover:bg-success-600 transition-colors disabled:bg-gray-300 dark:disabled:bg-neutral-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
               >
                 Submit Application
               </button>
